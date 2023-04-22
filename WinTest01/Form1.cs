@@ -23,7 +23,11 @@ namespace WinTest01
         {
             
             bool res = Ex1.openExcel();
-            Ex1.writeExcel(this.textBox1.Text);
+            //Ex1.writeExcel(this.textBox1.Text);
+
+            string[,] Data = { { "Pedro", "Juan", "Manuel" }, { "Santi", "Ricardo", "Manueloto" } };
+            Ex1.writeExcelData(Data,"Sheet2",3,3);
+
             if (res) Ex1.closeExcel();
 
         }

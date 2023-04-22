@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
 
 
@@ -59,6 +56,30 @@ namespace WinTest01
             ws1.Cells[1, 1] = Data;
         }
 
+        public void writeExcelData(string[,] Data, string SheetName, int row, int col)
+        {
+            Excel.Worksheet ws1;
+
+            try
+            {
+                ws1 = wb1.Worksheets[SheetName];
+            }
+            catch (Exception)
+            {
+                ws1 = wb1.Worksheets.Add();
+                ws1.Name = SheetName;
+
+            }            
+
+            int UB0 = Data.GetUpperBound(0);
+            int UB1 = Data.GetUpperBound(1);
+            Excel.Range rg1 = ws1.Cells[row, col];
+            Excel.Range rg2 = ws1.Cells[row+UB0,col+UB1];
+            Excel.Range targetRange1 = ws1.get_Range(rg1, rg2);
+            targetRange1.Value = Data;
+
+        }
+
         public void closeExcel()
         {
             wb1.Close(true);
@@ -66,4 +87,5 @@ namespace WinTest01
 
 
     }
+
 }
