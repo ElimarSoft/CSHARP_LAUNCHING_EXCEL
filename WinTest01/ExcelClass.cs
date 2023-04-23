@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -64,7 +65,7 @@ namespace WinTest01
             {
                 ws1 = wb1.Worksheets[SheetName];
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 ws1 = wb1.Worksheets.Add();
                 ws1.Name = SheetName;
@@ -73,9 +74,7 @@ namespace WinTest01
 
             int UB0 = Data.GetUpperBound(0);
             int UB1 = Data.GetUpperBound(1);
-            Excel.Range rg1 = ws1.Cells[row, col];
-            Excel.Range rg2 = ws1.Cells[row+UB0,col+UB1];
-            Excel.Range targetRange1 = ws1.get_Range(rg1, rg2);
+            Excel.Range targetRange1 = ws1.Range[ws1.Cells[row, col], ws1.Cells[row + UB0, col + UB1]];
             targetRange1.Value = Data;
 
         }
@@ -85,6 +84,11 @@ namespace WinTest01
             wb1.Close(true);
         }
 
+        public void killExcelProcesses()
+        {
+            Process[] ps = Process.GetProcessesByName("excel");
+            foreach (Process p in ps) p.Kill();
+        }
 
     }
 
