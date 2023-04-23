@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Office.Interop.Excel;
+using System;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -8,8 +9,11 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace WinTest01
 {
+  
     internal class ExcelClass
     {
+        const uint MK_E_UNAVAILABLE = 0x800401E3;
+        const uint DISP_E_BADINDEX = 0x8002000B;
 
         Excel.Application xlApp;
         Excel.Workbook wb1;
@@ -21,12 +25,14 @@ namespace WinTest01
         {
             bool result = true;
 
+ 
             try
             {
                 xlApp = (Excel.Application)Marshal.GetActiveObject("Excel.Application");
             }
-            catch (Exception)
+            catch (COMException e)
             {
+                if ((uint)e.ErrorCode != MK_E_UNAVAILABLE) throw;
                 xlApp = new Excel.Application();
             }
 
@@ -35,8 +41,10 @@ namespace WinTest01
                 wb1 = xlApp.Workbooks[File1];
                 result = false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                if ((uint)e.HResult != DISP_E_BADINDEX) throw;
+                
                 if (File.Exists(Path1+File1)) wb1 = xlApp.Workbooks.Open(Path1+File1, true, false);
                 else
                 {
@@ -67,9 +75,11 @@ namespace WinTest01
             }
             catch (Exception e)
             {
+
+                if ((uint)e.HResult != DISP_E_BADINDEX) throw;
+
                 ws1 = wb1.Worksheets.Add();
                 ws1.Name = SheetName;
-
             }            
 
             int UB0 = Data.GetUpperBound(0);
